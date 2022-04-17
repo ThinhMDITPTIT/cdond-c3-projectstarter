@@ -215,9 +215,9 @@ jobs:
           command: |
             # Your code here
             echo ENVIRONMENT=production > "backend/.env"
+            echo NODE_ENV=production >> "backend/.env"
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
             echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
-            echo NODE_ENV=production >> "backend/.env"
             echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
             echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
             echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
@@ -240,7 +240,7 @@ jobs:
             curl -H "Content-Type: text/plain" \
               -H "token: 7933fe63-4687-4fa1-8426-aa25aa1730ec" \
               --request PUT --data "1" \
-              https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
+              https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
     # Here's where you will add some code to rollback on failure
 
 workflows:
