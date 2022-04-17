@@ -125,7 +125,8 @@ jobs:
   deploy-infrastructure:
     docker:
       # Docker image here that supports AWS CLI
-      - image: amazon/aws-cli
+      # Fix issue "tar utility is not present in this image but it is required. Please install it to have workflow workspace capability.""
+      - image: cimg/base:2020.01
     steps:
       # Checkout code from git
       - checkout
@@ -160,6 +161,25 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure
+
+  # configure-infrastructure:
+  #   docker:
+  #     # Docker image here that supports Ansible
+  #   steps:
+  #     # Checkout code from git
+  #     # Add ssh keys with fingerprint
+  #     # attach workspace
+  #     - run:
+  #         name: Install dependencies
+  #         command: |
+  #           # Your code here
+  #           exit 1
+  #     - run:
+  #         name: Configure server
+  #         command: |
+  #           # Your code here
+  #           exit 1
+  #     # Here's where you will add some code to rollback on failure
 
 workflows:
   default:
