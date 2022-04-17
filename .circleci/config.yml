@@ -237,7 +237,7 @@ jobs:
             npm run build
             sudo npm run migrations > migration.log
             cat migration.log
-            migration_succesful=$(cat migration.log | grep -c "migration has been executed successfully")
+            migration_succesful=$(cat migration.log | grep -c "has been executed successfully")
             if [ $migration_succesful > 0 ]; then exit 0; else exit 1; fi;
       - run:
           name: Send migration results to memstash
