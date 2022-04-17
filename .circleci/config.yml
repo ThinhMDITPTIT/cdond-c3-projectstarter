@@ -1,7 +1,12 @@
 version: 2.1
 
 orbs: 
-  aws-cli: circleci/aws-cli@1.3.0
+  aws-cli: circleci/aws-cli@3.0.0
+
+parameters:
+  memstash-token:
+    type: string
+    default: "1abcb551-0e4b-4d65-9fcc-4af6c4dc7eb5"
 
 jobs:
   build-frontend:
@@ -238,9 +243,9 @@ jobs:
           command: |
             # Your code here
             curl -H "Content-Type: text/plain" \
-              -H "token: 7933fe63-4687-4fa1-8426-aa25aa1730ec" \
+              -H "token: << pipeline.parameters.memstash-token >>" \
               --request PUT --data "1" \
-              https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
+              https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
     # Here's where you will add some code to rollback on failure
 
 workflows:
