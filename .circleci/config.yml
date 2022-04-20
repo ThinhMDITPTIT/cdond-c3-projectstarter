@@ -165,6 +165,8 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
+      - destroy_environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       # Here's where you will add some code to rollback on failure
 
   configure-infrastructure:
@@ -232,23 +234,34 @@ jobs:
             echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
             cd backend
             sudo npm install
-            # npm audit fix --audit-level=critical --force
-            # sudo npm i typescript -g --force
-            # npm audit fix --audit-level=critical --force
-            # npx tsc --init
             npm run build
             sudo npm run migrations > migration.log
             cat migration.log
             migration_succesful=$(cat migration.log | grep -c "has been executed successfully")
             if [ $migration_succesful > 0 ]; then exit 0; else exit 1; fi;
+      # - run:
+      #     name: Send migration results to memstash or kvdb
+      #     command: |
+      #       # Your code here
+      #       # curl -H "Content-Type: text/plain" \
+      #       #   -H "token: << pipeline.parameters.memstash-token >>" \
+      #       #   --request PUT --data "1" \
+      #       #   https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
+      #       curl https://kvdb.io/9GE4jRtKznmVKRfvdBABBe/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
       - run:
-          name: Send migration results to memstash
+          name: Store migration result in a file.
           command: |
-            # Your code here
-            curl -H "Content-Type: text/plain" \
-              -H "token: << pipeline.parameters.memstash-token >>" \
-              --request PUT --data "1" \
-              https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
+            cd backend
+            if grep -q "has been executed successfully." migration_output.txt
+            then
+              touch ~/project/.circleci/outputs/db_migration_success
+            fi
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/outputs/
+      - destroy_environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
     # Here's where you will add some code to rollback on failure
 
 workflows:
