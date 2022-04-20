@@ -435,50 +435,50 @@ jobs:
   #           # your code here
   #     # Here's where you will add some code to rollback on failure  
 
-  # smoke-test-frontend:
-  #   docker:
-  #     - image: python:3.7-alpine3.11
-  #   steps:
-  #     - attach_workspace:
-  #         at: ~/
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           apk add --update curl
-  #           pip install awscli
-  #     - run:
-  #         name: Package frontend app
-  #         command: |
-  #           if curl -s http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.eu-central-1.amazonaws.com/ | grep "Welcome"
-  #           then
-  #           return 0
-  #           else
-  #           return 1
-  #           fi
-  #     - destroy_environment:
-  #         workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-  #     - revert-migrations
+  smoke-test-frontend:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update curl
+            pip install awscli
+      - run:
+          name: Package frontend app
+          command: |
+            if curl -s http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.eu-central-1.amazonaws.com/ | grep "Welcome"
+            then
+            return 0
+            else
+            return 1
+            fi
+      - destroy_environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      - revert-migrations
 
-  # smoke-test-backend:
-  #   docker:
-  #     - image: python:3.7-alpine3.11
-  #   steps:
-  #     - attach_workspace:
-  #         at: ~/
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           apk add --update curl
-  #           pip install awscli
-  #     - run:
-  #         name: Test backend app.
-  #         command: |
-  #           API_URL=`cat .circleci/outputs/backend_url.txt`
-  #           echo $API_URL
-  #           curl -s $API_URL/api/status
-  #     - destroy_environment:
-  #         workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-  #     - revert-migrations
+  smoke-test-backend:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update curl
+            pip install awscli
+      - run:
+          name: Test backend app.
+          command: |
+            API_URL=`cat .circleci/outputs/backend_url.txt`
+            echo $API_URL
+            curl -s $API_URL/api/status
+      - destroy_environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      - revert-migrations
 
   # cloudfront-update:
   #   docker:
@@ -521,9 +521,9 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
-      # - smoke-test-frontend:
-      #     requires:
-      #       - deploy-frontend
-      # - smoke-test-backend:
-      #     requires:
-      #       - deploy-backend
+      - smoke-test-frontend:
+          requires:
+            - deploy-frontend
+      - smoke-test-backend:
+          requires:
+            - deploy-backend
