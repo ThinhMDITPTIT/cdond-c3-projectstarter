@@ -3,10 +3,38 @@ version: 2.1
 orbs: 
   aws-cli: circleci/aws-cli@3.0.0
 
-parameters:
-  memstash-token:
-    type: string
-    default: "1abcb551-0e4b-4d65-9fcc-4af6c4dc7eb5"
+# parameters:
+#   memstash-token:
+#     type: string
+#     default: "1abcb551-0e4b-4d65-9fcc-4af6c4dc7eb5"
+
+commands:
+  destroy_environment:
+    description: Destroy backend and frontend cloudformation stacks given a workflow ID.
+    parameters:
+      workflow_id:
+        type: string
+    steps:
+      - run:
+          name: Destroy environments
+          when: on_fail
+          command: |
+            echo "Destroying environment: <<parameters.workflow_id>> "
+            aws cloudformation delete-stack --stack-name udapeople-backend-<<parameters.workflow_id>>
+            # aws s3 rm s3://udapeople-<<parameters.workflow_id>> --recursive
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<<parameters.workflow_id>>
+  undo_migrations:
+    description: Revert the last migration if successfully run in the current workflow.
+    steps:
+      - run:
+          name: Revert migrations
+          when: on_fail
+          command: |
+            cd ~/project/backend
+            if [[ -f "~/project/.circleci/outputs/db_migration_success" ]]; then
+              npm i
+              npm run migration:revert
+            fi
 
 jobs:
   build-frontend:
@@ -234,11 +262,13 @@ jobs:
             echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
             cd backend
             sudo npm install
-            npm run build
-            sudo npm run migrations > migration.log
-            cat migration.log
-            migration_succesful=$(cat migration.log | grep -c "has been executed successfully")
-            if [ $migration_succesful > 0 ]; then exit 0; else exit 1; fi;
+            # npm run build
+            # sudo npm run migrations > migration.log
+            # cat migration.log
+            # migration_succesful=$(cat migration.log | grep -c "has been executed successfully")
+            # if [ $migration_succesful > 0 ]; then exit 0; else exit 1; fi;
+            npm run migrations >> migration_output.txt
+            cat migration_output.txt
       # - run:
       #     name: Send migration results to memstash or kvdb
       #     command: |
