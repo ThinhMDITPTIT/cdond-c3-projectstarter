@@ -23,7 +23,7 @@ commands:
             aws cloudformation delete-stack --stack-name udapeople-backend-<<parameters.workflow_id>>
             # aws s3 rm s3://udapeople-<<parameters.workflow_id>> --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-<<parameters.workflow_id>>
-  undo_migrations:
+  revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     steps:
       - run:
@@ -337,7 +337,7 @@ jobs:
             aws s3 cp --recursive frontend/dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
       - destroy_environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-      - undo_migrations
+      - revert-migrations
 
       # Here's where you will add some code to rollback on failure      
                     
@@ -407,10 +407,10 @@ jobs:
             ls ~/project/.circleci/ansible/roles/deploy_backend/files/
             cd ~/project/backend
             ansible-galaxy install weareinteractive.environment
-            ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/playbook.yml
+            ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/configure-server.yml
       - destroy_environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-      - undo_migrations
+      - revert-migrations
 
   # smoke-test:
   #   docker:
@@ -457,7 +457,7 @@ jobs:
   #           fi
   #     - destroy_environment:
   #         workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-  #     - undo_migrations
+  #     - revert-migrations
 
   # smoke-test-backend:
   #   docker:
@@ -478,7 +478,7 @@ jobs:
   #           curl -s $API_URL/api/status
   #     - destroy_environment:
   #         workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-  #     - undo_migrations
+  #     - revert-migrations
 
   # cloudfront-update:
   #   docker:
