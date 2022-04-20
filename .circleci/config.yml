@@ -566,16 +566,16 @@ jobs:
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
             printf '%s\n' "${STACKS[@]}"
-            # aws cloudformation deploy \
-            #   --template-file .circleci/files/cloudfront.yml \
-            #   --stack-name udapeople-cloudfront \
-            #   --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-            # if printf '%s\n' "${STACKS[@]}" | grep -q "$OLD_WORKFLOW_ID"; then
-            #   echo "Removing previous stack"
-            #   aws s3 rm "s3://${OLD_WORKFLOW_ID}" --recursive
-            #   aws cloudformation delete-stack --stack-name "udapeople-backend-${OLD_WORKFLOW_ID}"
-            #   aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLD_WORKFLOW_ID}"
-            # fi
+            aws cloudformation deploy \
+              --template-file .circleci/files/cloudfront.yml \
+              --stack-name udapeople-cloudfront \
+              --parameter-overrides ID=udapeople-"${CIRCLE_WORKFLOW_ID:0:7}"
+            if printf '%s\n' "${STACKS[@]}" | grep -q "$OLD_WORKFLOW_ID"; then
+              echo "Removing previous stack"
+              aws s3 rm "s3://${OLD_WORKFLOW_ID}" --recursive
+              aws cloudformation delete-stack --stack-name "udapeople-backend-udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
+            fi
       - destroy_environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       - revert-migrations
