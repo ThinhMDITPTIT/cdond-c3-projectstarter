@@ -118,7 +118,7 @@ jobs:
           paths:
             - project/.circleci/outputs/backend_url.txt
             - project/.circleci/ansible/inventory.txt
-      - destroy_environment:
+      - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   deploy-frontend-infrastructure:
@@ -133,7 +133,7 @@ jobs:
               --template-file .circleci/cloudformation/frontend_infrastructure.yml \
               --parameter-overrides ID="prod-${CIRCLE_WORKFLOW_ID:0:7}" \
               --stack-name udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy_environment:
+      - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   run-db-migrations-for-backend:
@@ -161,7 +161,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/outputs/
-      - destroy_environment:
+      - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   deploy-backend-artifact:
@@ -196,7 +196,7 @@ jobs:
             cd ~/project/backend
             ansible-galaxy install weareinteractive.environment
             ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/playbook.yml
-      - destroy_environment:
+      - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       - revert-migrations
 
@@ -225,7 +225,7 @@ jobs:
           root: ~/
           paths:
             - project/frontend/dist
-      - destroy_environment:
+      - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       - revert-migrations
 
@@ -246,7 +246,7 @@ jobs:
           command: |
             cd ~/project/frontend
             aws s3 cp dist s3://udapeople-prod-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-      - destroy_environment:
+      - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       - revert-migrations
 
@@ -270,7 +270,7 @@ jobs:
             else
             return 1
             fi
-      - destroy_environment:
+      - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       - revert-migrations
 
@@ -291,7 +291,7 @@ jobs:
             API_URL=`cat .circleci/outputs/backend_url.txt`
             echo $API_URL
             curl -s $API_URL/api/status
-      - destroy_environment:
+      - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       - revert-migrations
 
@@ -327,7 +327,7 @@ jobs:
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLD_WORKFLOW_ID}"
             fi
 
-      - destroy_environment:
+      - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       - revert-migrations
 
