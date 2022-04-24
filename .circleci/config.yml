@@ -637,11 +637,11 @@ workflows:
             - run-db-migrations-for-backend
       - deploy-frontend:
           requires: [package-frontend-artifact]
-      - smoke-test-backend:
-          requires:
-            - deploy-backend
+      # - smoke-test-backend:
+      #     requires:
+      #       - deploy-backend
       - smoke-test-frontend:
           requires:
             - deploy-frontend
-      - cloudfront-update:
-          requires: [smoke-test-backend, smoke-test-frontend]
+      # - cloudfront-update:
+      #     requires: [smoke-test-frontend]
