@@ -404,17 +404,17 @@ jobs:
             cd dist
             cp ../package.json .
             zip -rq dist.zip *
-            mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
-            mv dist.zip ~/project/.circleci/ansible/roles/deploy/files/
+            mkdir -p ~/project/.circleci/ansible/roles/deploy_backend/files/
+            mv dist.zip ~/project/.circleci/ansible/roles/deploy_backend/files/
       - add_ssh_keys:
           fingerprints: [ "5d:9b:7d:63:cc:5d:2e:0b:f5:f4:0b:06:9d:41:dd:3d" ]
       - run:
           name: Setup EC2 instance & copy compiled backend to the EC2 instance
           command: |
-            ls ~/project/.circleci/ansible/roles/deploy/files/
+            ls ~/project/.circleci/ansible/roles/deploy_backend/files/
             cd ~/project/backend
             ansible-galaxy install weareinteractive.environment
-            ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/configure-server.yml
+            ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/playbook.yml
       - destroy_environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       - revert-migrations
