@@ -176,6 +176,20 @@ jobs:
           command: |
             apk add --update curl nodejs npm ansible zip
             pip install awscli
+      # - run:
+      #     name: Deploy backend
+      #     command: |
+      #       cd backend
+      #       npm i
+      #       npm run build
+      #       cp package* ./dist
+      #       cd ..
+      #       # Zip the directory
+      #       tar -C backend -czvf artifact.tar.gz .
+      #       cd .circleci/ansible
+      #       echo "Contents  of the inventory.txt file is -------"
+      #       cat inventory.txt
+      #       ansible-playbook -i inventory.txt deploy-backend.yml
       - run:
           name: Build backend app
           command: |
@@ -381,7 +395,7 @@ workflows:
       - smoke-test-frontend:
           requires:
             - deploy-frontend-artifact
-      # - deploy-cloudfront-infrastructure:
-      #     requires:
-      #       - smoke-test-backend
-      #       - smoke-test-frontend
+      - deploy-cloudfront-infrastructure:
+          requires:
+            - smoke-test-backend
+            - smoke-test-frontend
