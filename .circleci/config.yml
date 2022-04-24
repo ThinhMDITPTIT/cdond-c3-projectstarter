@@ -375,9 +375,9 @@ workflows:
       - deploy-frontend-artifact:
           requires:
             - package-frontend-artifact
-      # - smoke-test-backend:
-      #     requires:
-      #       - deploy-backend-artifact
+      - smoke-test-backend:
+          requires:
+            - deploy-backend-artifact
       - smoke-test-frontend:
           requires:
             - deploy-frontend-artifact
