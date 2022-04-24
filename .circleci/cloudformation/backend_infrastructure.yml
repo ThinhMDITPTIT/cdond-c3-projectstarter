@@ -39,7 +39,7 @@ Resources:
       InstanceType: t2.micro
       SecurityGroups:
         - Ref: InstanceSecurityGroup
-      KeyName: udacity
+      KeyName: udapeople # If you use another key pair name, you should change this value to match.
       ImageId: ami-04505e74c0741db8d
       Tags:
         - Key: Name
