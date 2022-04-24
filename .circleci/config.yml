@@ -381,7 +381,7 @@ workflows:
       - smoke-test-frontend:
           requires:
             - deploy-frontend-artifact
-      - deploy_cloudfront_infrastructure:
+      - deploy-cloudfront-infrastructure:
           requires:
             - smoke-test-backend
             - smoke-test-frontend
