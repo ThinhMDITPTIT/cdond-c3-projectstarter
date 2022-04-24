@@ -58,7 +58,7 @@ jobs:
     steps:
       - checkout
       - run: npm i --prefix backend
-      - run: npm run lint --prefix backend
+      # - run: npm run lint --prefix backend
       - persist_to_workspace:
           root: ~/
           paths:
@@ -90,7 +90,7 @@ jobs:
     steps:
       - checkout
       - run: npm i --prefix frontend
-      - run: npm run lint --prefix frontend
+      # - run: npm run lint --prefix frontend
       - persist_to_workspace:
           root: ~/
           paths:
